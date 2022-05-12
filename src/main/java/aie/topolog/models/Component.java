@@ -1,9 +1,9 @@
 package aie.topolog.models;
 
-import org.json.JSONArray;
+
 import org.json.JSONObject;
 
-import java.util.List;
+
 import java.util.Locale;
 import java.util.Map;
 
@@ -11,8 +11,8 @@ public class Component {
 
     protected String id;
     protected ComponentType type;
-    protected Map<String, Object> netList;
-    protected Map<String, Object> properties;
+    protected transient Map<String, Object> netList;
+    protected transient Map<String, Object> properties;
 
 
     public Component setProperties(Map<String, Object> properties) {

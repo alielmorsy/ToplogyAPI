@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Topology {
     private String id;
-    private List<Component> components = new ArrayList<>();
+    private transient List<Component> components = new ArrayList<>();
 
     public Topology() {
 
@@ -33,7 +33,7 @@ public class Topology {
         this.components = components;
         return this;
     }
-
+@Override
     public String toString() {
         var builder = new StringBuilder();
         builder.append("{").append("Topology: ").append(id).append(",");

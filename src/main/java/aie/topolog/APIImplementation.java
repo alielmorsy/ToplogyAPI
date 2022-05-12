@@ -9,7 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class APIImplementation implements API {
 
-    private final Map<String, Topology> topologyMap = new HashMap<>();
+    private transient final Map<String, Topology> topologyMap = new HashMap<>();
 
     @Override
     public boolean readTopology(String fileName) throws TopologyException {
@@ -48,7 +48,15 @@ public class APIImplementation implements API {
 
     @Override
     public List<Topology> queryTopologies() {
-        return topologyMap.values().stream().toList();
+        return new ArrayList<>(topologyMap.values());
+    }
+
+    @Override
+    public Topology getTopology(String id) {
+        if (topologyMap.containsKey(id)) {
+            return topologyMap.get(id);
+        }
+        return null;
     }
 
     @Override
@@ -85,9 +93,14 @@ public class APIImplementation implements API {
             for (int i = 0; i < components.length(); i++) {
                 var component = components.getJSONObject(i);
                 switch (component.getString("type")) {
-                    case "resistor" -> componentsArr.add(handleResistorComponent(component));
-                    case "nmos" -> componentsArr.add(handleNMOS(component));
-                    default -> throw new IllegalStateException("Unexpected value: " + component.getString("type"));
+                    case "resistor":
+                        componentsArr.add(handleResistorComponent(component));
+                        break;
+                    case "nmos":
+                        componentsArr.add(handleNMOS(component));
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + component.getString("type"));
                 }
             }
             topology.setComponents(componentsArr);
