@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.nio.file.Files;
@@ -35,6 +36,9 @@ public class APIImplementation implements API {
 
     @Override
     public void writeTopology(String topologyID, String fileName) throws TopologyException, IOException {
+        var folder = new File("export");
+        if (!folder.exists() || !folder.isDirectory())
+            folder.mkdir();
         var topology = getTopologyOrThrow(topologyID);
         JSONObject t = new JSONObject();
         t.put("id", topology.id());
@@ -43,7 +47,7 @@ public class APIImplementation implements API {
             arr.put(c.toJson());
         }
         t.put("components", arr);
-        Files.writeString(Path.of(fileName), t.toString());
+        Files.writeString(Path.of("out", fileName), t.toString());
     }
 
     @Override
@@ -113,7 +117,7 @@ public class APIImplementation implements API {
 
     }
 
-    private Component handleResistorComponent(JSONObject component) throws TopologyException {
+    private Component handleResistorComponent(JSONObject component) {
         Resistor resistor = new Resistor();
         var netList = component.getJSONObject("netlist");
         resistor.setNetList(netList.toMap());
